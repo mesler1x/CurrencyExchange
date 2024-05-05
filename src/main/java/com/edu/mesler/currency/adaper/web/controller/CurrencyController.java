@@ -3,6 +3,7 @@ package com.edu.mesler.currency.adaper.web.controller;
 import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
+import com.edu.mesler.currency.adaper.web.exception.DBException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,11 +25,11 @@ public class CurrencyController {
 
     @GetMapping("/currency/{code}")
     public CurrencyResponse getOne(@PathVariable String code) {
-        return null;
+        return currencyRepository.getOneByCode(code);
     }
 
     @PostMapping("/currencies")
     public CurrencyResponse create(@RequestBody CurrencyRequest currencyRequest) {
-        return null;
+        return currencyRepository.create(currencyRequest);
     }
 }
