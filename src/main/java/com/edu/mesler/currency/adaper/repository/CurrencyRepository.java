@@ -1,14 +1,17 @@
 package com.edu.mesler.currency.adaper.repository;
 
+import com.edu.mesler.currency.adaper.repository.mapper.CurrencyMapper;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
 import com.edu.mesler.currency.adaper.web.exception.CurrencyNotFoundException;
 import com.edu.mesler.currency.adaper.web.exception.DBException;
-import com.edu.mesler.currency.adaper.web.exception.NotUniqueException;
+import com.edu.mesler.currency.domain.Currency;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -17,53 +20,22 @@ import java.util.List;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class CurrencyRepository {
     static Connection connection;
-    /*@Value("${spring.datasource.url}")
-    static String URL;
-    @Value("{spring.datasource.username}")
-    static String USERNAME;
-    @Value("{spring.datasource.password}")
-    static String PASSWORD;*/
+    private final JdbcTemplate jdbcTemplate;
 
-    private static final String URL = "jdbc:postgresql://localhost:5433/currency";
-    private static final String PASSWORD = "Mama_230506";
-    private static final String USERNAME = "postgres";
-
-
-    static {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    @SneakyThrows
     public List<CurrencyResponse> getAll() {
         List<CurrencyResponse> response = new ArrayList<>();
-        try {
-            Statement statement = connection.createStatement();
-            String SQL = "SELECT * FROM Currencies";
-            ResultSet resultSet = statement.executeQuery(SQL);
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String code = resultSet.getString("code");
-                String fullName = resultSet.getString("fullName");
-                String sign = resultSet.getString("sign");
-
-                response.add(new CurrencyResponse(
-                        id, code, fullName, sign
-                ));
-            }
-        } catch (DBException e) {
-            throw new DBException();
+        List<Currency> queryResult = jdbcTemplate.query("SELECt * FROM Currencies", new CurrencyMapper());
+        for(Currency currency : queryResult) {
+            CurrencyResponse currencyResponse = new CurrencyResponse(
+                    currency.getId(),
+                    currency.getFullName(),
+                    currency.getCode(),
+                    currency.getSign()
+            );
+            response.add(currencyResponse);
         }
         return response;
     }
