@@ -11,10 +11,10 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestController
+@RestControllerAdvice
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class CurrencyControllerAdviceAdvice extends ResponseEntityExceptionHandler {
     String DB_EXCEPTION_MESSAGE = "Something went wrong with DB";

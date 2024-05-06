@@ -4,10 +4,14 @@ import com.edu.mesler.currency.adaper.repository.mapper.CurrencyMapper;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
 import com.edu.mesler.currency.adaper.web.exception.CurrencyNotFoundException;
+import com.edu.mesler.currency.adaper.web.exception.DBException;
+import com.edu.mesler.currency.adaper.web.exception.NotUniqueException;
 import com.edu.mesler.currency.domain.Currency;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -39,9 +43,14 @@ public class CurrencyRepository {
 
 
     public CurrencyResponse getOneByCode(String code) {
-        Currency queryResult = jdbcTemplate.query("SELECT * FROM Currencies WHERE code = ?",
-                new Object[]{code},
-                new CurrencyMapper()).stream().findFirst().orElse(null);
+        Currency queryResult = null;
+        try {
+            queryResult = jdbcTemplate.query("SELECT * FROM Currencies WHERE code = ?",
+                    new Object[]{code},
+                    new CurrencyMapper()).stream().findFirst().orElse(null);
+        } catch (DataAccessException e) {
+            throw new DBException();
+        }
 
         if(queryResult == null) {
             throw new CurrencyNotFoundException();
@@ -54,8 +63,13 @@ public class CurrencyRepository {
     }
 
     public CurrencyResponse create(CurrencyRequest currencyRequest) {
-        jdbcTemplate.update("INSERT INTO Currencies (code, fullName, sign) VALUES (?,?,?)",
-                currencyRequest.code(), currencyRequest.name(), currencyRequest.sign());
+        try {
+            jdbcTemplate.update("INSERT INTO Currencies (code, fullName, sign) VALUES (?,?,?)",
+                    currencyRequest.code(), currencyRequest.name(), currencyRequest.sign());
+        } catch (DuplicateKeyException e) {
+            throw new NotUniqueException();
+        }
+
 
         return getOneByCode(currencyRequest.code());
     }
