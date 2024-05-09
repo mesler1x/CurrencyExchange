@@ -3,9 +3,9 @@ package com.edu.mesler.currency.adaper.repository;
 import com.edu.mesler.currency.adaper.repository.mapper.CurrencyMapper;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
-import com.edu.mesler.currency.adaper.web.exception.CurrencyNotFoundException;
-import com.edu.mesler.currency.adaper.web.exception.DBException;
-import com.edu.mesler.currency.adaper.web.exception.NotUniqueException;
+import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.adaper.web.exception.InternalException;
+import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
 import com.edu.mesler.currency.domain.Currency;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -49,11 +49,11 @@ public class CurrencyRepository {
                     new Object[]{code},
                     new CurrencyMapper()).stream().findFirst().orElse(null);
         } catch (DataAccessException e) {
-            throw new DBException();
+            throw new InternalException("Database");
         }
 
         if(queryResult == null) {
-            throw new CurrencyNotFoundException();
+            throw new NotFoundException("Currency");
         }
 
         return new CurrencyResponse(queryResult.getId(),
@@ -67,7 +67,7 @@ public class CurrencyRepository {
             jdbcTemplate.update("INSERT INTO Currencies (code, fullName, sign) VALUES (?,?,?)",
                     currencyRequest.code(), currencyRequest.name(), currencyRequest.sign());
         } catch (DuplicateKeyException e) {
-            throw new NotUniqueException();
+            throw new AlreadyExistException("Currency with this code");
         }
 
 

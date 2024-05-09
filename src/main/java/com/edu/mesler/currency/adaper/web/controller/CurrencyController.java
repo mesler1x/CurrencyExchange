@@ -3,7 +3,6 @@ package com.edu.mesler.currency.adaper.web.controller;
 import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
-import com.edu.mesler.currency.adaper.web.exception.DBException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
