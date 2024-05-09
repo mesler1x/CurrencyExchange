@@ -3,10 +3,9 @@ package com.edu.mesler.currency.adaper.repository;
 import com.edu.mesler.currency.adaper.repository.mapper.CurrencyMapper;
 import com.edu.mesler.currency.adaper.repository.mapper.CurrencyRowMapperImpl;
 import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
-import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
-import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
-import com.edu.mesler.currency.adaper.web.exception.InternalException;
 import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
+import com.edu.mesler.currency.adaper.web.exception.InternalException;
+import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -27,8 +25,14 @@ public class CurrencyRepository {
     CurrencyMapper currencyMapper;
 
     public List<CurrencyEntity> getAll() {
-        List<CurrencyResponse> response = new ArrayList<>();
-        List<CurrencyEntity> queryResult = jdbcTemplate.query("SELECT * FROM Currencies", new CurrencyRowMapperImpl());
+        List<CurrencyEntity> queryResult;
+
+        try {
+            queryResult = jdbcTemplate.query("SELECT * FROM Currencies", new CurrencyRowMapperImpl());
+        } catch (DataAccessException exception) {
+            throw new InternalException("Database");
+        }
+
         return queryResult;
     }
 
