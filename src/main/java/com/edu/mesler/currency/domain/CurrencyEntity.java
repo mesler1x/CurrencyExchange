@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Currency {
+public class CurrencyEntity {
     int id;
     String code;
     String fullName;
