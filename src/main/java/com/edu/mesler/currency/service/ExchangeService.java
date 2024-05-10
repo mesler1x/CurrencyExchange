@@ -45,4 +45,19 @@ public class ExchangeService {
 
         return exchangeMapper.entityToResponse(exchangeEntity);
     }
+
+    public ExchangeResponse getExchangeByCodes(String codes) {
+        String baseCode = codes.substring(0,3);
+        String targetCode = codes.substring(3);
+
+        CurrencyEntity baseCurrencyEntity = currencyRepository.getOneByCode(baseCode);
+        CurrencyEntity targetCurrencyEntity = currencyRepository.getOneByCode(targetCode);
+
+        int baseCurrencyId = baseCurrencyEntity.getId();
+        int targetCurrencyId = targetCurrencyEntity.getId();
+
+        ExchangeEntity exchangeEntity = exchangeRepository.findExchangeByTwoCodesIds(baseCurrencyId, targetCurrencyId);
+
+        return exchangeMapper.entityToResponse(exchangeEntity);
+    }
 }

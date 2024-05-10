@@ -1,11 +1,10 @@
 package com.edu.mesler.currency.adaper.repository;
 
-import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
-import com.edu.mesler.currency.domain.CurrencyEntity;
-import com.edu.mesler.currency.service.mapper.ExchangeRowMapperImpl;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;
+import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
 import com.edu.mesler.currency.domain.ExchangeEntity;
+import com.edu.mesler.currency.service.mapper.ExchangeRowMapperImpl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,7 +35,7 @@ public class ExchangeRepository {
         }
         return queryResult;
     }
-    //todo - отлов ошибок
+
     public ExchangeEntity save(ExchangeRequest exchangeRequest) {
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
@@ -66,6 +65,19 @@ public class ExchangeRepository {
         if (exchangeEntity == null) {
             throw new NotFoundException("Exchange with id - " + id);
         }
+        return exchangeEntity;
+    }
+
+    public ExchangeEntity findExchangeByTwoCodesIds(int baseCurrencyId, int targetCurrencyId) {
+
+        ExchangeEntity exchangeEntity = jdbcTemplate.query("SELECT * FROM ExchangeRates WHERE baseCurrencyId = ? and targetCurrencyId = ?",
+                new Object[]{baseCurrencyId, targetCurrencyId},
+                new ExchangeRowMapperImpl(currencyRepository)).stream().findAny().orElse(null);
+
+        if (exchangeEntity == null) {
+            throw new NotFoundException("Exchange rate with this codes");
+        }
+
         return exchangeEntity;
     }
 }
