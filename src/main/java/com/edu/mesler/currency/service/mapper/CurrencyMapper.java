@@ -1,4 +1,4 @@
-package com.edu.mesler.currency.adaper.repository.mapper;
+package com.edu.mesler.currency.service.mapper;
 
 import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
 import com.edu.mesler.currency.domain.CurrencyEntity;

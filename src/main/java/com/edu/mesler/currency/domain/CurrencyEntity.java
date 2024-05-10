@@ -12,4 +12,8 @@ public class CurrencyEntity {
     String code;
     String fullName;
     String sign;
+
+    public CurrencyEntity(int id) {
+        this.id = id;
+    }
 }

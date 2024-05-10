@@ -2,7 +2,7 @@ package com.edu.mesler.currency.service;
 
 import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.repository.ExchangeRepository;
-import com.edu.mesler.currency.adaper.repository.mapper.ExchangeMapper;
+import com.edu.mesler.currency.service.mapper.ExchangeMapper;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRateAddRequest;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeResponse;

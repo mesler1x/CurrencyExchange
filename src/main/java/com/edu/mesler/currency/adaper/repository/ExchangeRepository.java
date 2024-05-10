@@ -1,6 +1,8 @@
 package com.edu.mesler.currency.adaper.repository;
 
-import com.edu.mesler.currency.adaper.repository.mapper.ExchangeMapperImpl;
+import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.domain.CurrencyEntity;
+import com.edu.mesler.currency.service.mapper.ExchangeRowMapperImpl;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;
 import com.edu.mesler.currency.domain.ExchangeEntity;
@@ -28,7 +30,7 @@ public class ExchangeRepository {
     public List<ExchangeEntity> getAll() {
         List<ExchangeEntity> queryResult;
         try {
-            queryResult = jdbcTemplate.query("SELECT * FROM ExchangeRates", new ExchangeMapperImpl(currencyRepository));
+            queryResult = jdbcTemplate.query("SELECT * FROM ExchangeRates", new ExchangeRowMapperImpl());
         } catch (DataAccessException exception) {
             throw new InternalException("Database");
         }
@@ -56,7 +58,23 @@ public class ExchangeRepository {
     }
 
     public ExchangeEntity getById(int id) {
-        return jdbcTemplate.query("SELECT * FROM ExchangeRates WHERE id = ?",
-                new Object[]{id}, new ExchangeMapperImpl(currencyRepository)).stream().findFirst().orElse(null);
+
+        ExchangeEntity exchangeEntity = jdbcTemplate
+                .query("SELECT * FROM ExchangeRates WHERE id = ?",
+                        new Object[]{id}, new ExchangeRowMapperImpl()).stream().findFirst().orElse(null);
+
+        if (exchangeEntity == null) {
+            throw new NotFoundException("Exchange with id - " + id);
+        }
+        int baseId = exchangeEntity.getBaseCurrency().getId();
+        int targetId = exchangeEntity.getTargetCurrency().getId();
+
+        CurrencyEntity baseCurrencyEntity = currencyRepository.getOneById(baseId);
+        CurrencyEntity targetCurrencyEntity = currencyRepository.getOneById(targetId);
+
+        exchangeEntity.setBaseCurrency(baseCurrencyEntity);
+        exchangeEntity.setTargetCurrency(targetCurrencyEntity);
+
+        return exchangeEntity;
     }
 }

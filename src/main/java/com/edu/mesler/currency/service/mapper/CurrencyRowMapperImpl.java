@@ -1,4 +1,4 @@
-package com.edu.mesler.currency.adaper.repository.mapper;
+package com.edu.mesler.currency.service.mapper;
 
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import org.springframework.jdbc.core.RowMapper;

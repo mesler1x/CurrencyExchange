@@ -1,12 +1,17 @@
-package com.edu.mesler.currency.adaper.repository.mapper;
+package com.edu.mesler.currency.service.mapper;
 
 import com.edu.mesler.currency.adaper.web.dto.ExchangeResponse;
 import com.edu.mesler.currency.domain.ExchangeEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Component
+@RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ExchangeMapper {
     CurrencyMapper currencyMapper;
 
