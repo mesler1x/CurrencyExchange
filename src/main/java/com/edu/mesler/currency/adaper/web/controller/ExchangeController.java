@@ -25,7 +25,7 @@ public class ExchangeController {
     }
 
     @PostMapping("/exchangeRates")
-    public ExchangeRateAddRequest createExchangeRate(@RequestBody ExchangeRateAddRequest exchangeRateAddRequest) {
+    public ExchangeResponse createExchangeRate(@RequestBody ExchangeRateAddRequest exchangeRateAddRequest) {
         return exchangeService.addNewExchangeRate(exchangeRateAddRequest);
     }
 }

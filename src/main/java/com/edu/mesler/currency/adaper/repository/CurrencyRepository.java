@@ -65,4 +65,18 @@ public class CurrencyRepository {
 
         return getOneByCode(currencyRequest.code());
     }
+
+    public CurrencyEntity getOneById(int id) {
+        CurrencyEntity currencyEntity;
+        try {
+            currencyEntity = jdbcTemplate.query("SELECT * FROM Currencies WHERE id = ?", new Object[]{id}, new CurrencyRowMapperImpl()).stream().findFirst().orElse(null);
+        } catch (DataAccessException e) {
+            throw new InternalException("Database");
+        }
+
+        if (currencyEntity == null) {
+            throw new NotFoundException("Currency with id " + id);
+        }
+        return currencyEntity;
+    }
 }

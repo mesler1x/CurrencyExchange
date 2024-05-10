@@ -4,6 +4,7 @@ import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.repository.ExchangeRepository;
 import com.edu.mesler.currency.adaper.repository.mapper.ExchangeMapper;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRateAddRequest;
+import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeResponse;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import com.edu.mesler.currency.domain.ExchangeEntity;
@@ -33,12 +34,15 @@ public class ExchangeService {
         return response;
     }
 
-    public ExchangeRateAddRequest addNewExchangeRate(ExchangeRateAddRequest exchangeRateAddRequest) {
+    public ExchangeResponse addNewExchangeRate(ExchangeRateAddRequest exchangeRateAddRequest) {
+
         CurrencyEntity baseCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.baseCurrencyCode());
         CurrencyEntity targetCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.targetCurrencyCode());
 
+        ExchangeRequest exchangeRequest = new ExchangeRequest(baseCurrency.getId(), targetCurrency.getId(), exchangeRateAddRequest.rate());
+        ExchangeEntity exchangeEntity = exchangeRepository.save(exchangeRequest);
 
 
-        return null;
+        return exchangeMapper.entityToResponse(exchangeEntity);
     }
 }
