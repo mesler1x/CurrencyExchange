@@ -2,6 +2,7 @@ package com.edu.mesler.currency.service;
 
 import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.repository.ExchangeRepository;
+import com.edu.mesler.currency.adaper.web.exception.ClientException;
 import com.edu.mesler.currency.service.mapper.ExchangeMapper;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRateAddRequest;
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
@@ -36,8 +37,17 @@ public class ExchangeService {
 
     public ExchangeResponse addNewExchangeRate(ExchangeRateAddRequest exchangeRateAddRequest) {
 
+        if (exchangeRateAddRequest == null || exchangeRateAddRequest.rate() < 0 ||
+                exchangeRateAddRequest.baseCurrencyCode() == null || exchangeRateAddRequest.baseCurrencyCode().length() > 3
+        || exchangeRateAddRequest.targetCurrencyCode() == null || exchangeRateAddRequest.targetCurrencyCode().length() > 3 ||
+        exchangeRateAddRequest.targetCurrencyCode().equals(exchangeRateAddRequest.baseCurrencyCode())) {
+            throw new ClientException("Exchange add request");
+        }
+
         CurrencyEntity baseCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.baseCurrencyCode());
         CurrencyEntity targetCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.targetCurrencyCode());
+        
+
 
         ExchangeRequest exchangeRequest = new ExchangeRequest(baseCurrency.getId(), targetCurrency.getId(), exchangeRateAddRequest.rate());
         ExchangeEntity exchangeEntity = exchangeRepository.save(exchangeRequest);

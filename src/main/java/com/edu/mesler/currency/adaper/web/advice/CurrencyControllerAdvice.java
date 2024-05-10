@@ -2,6 +2,7 @@ package com.edu.mesler.currency.adaper.web.advice;
 
 import com.edu.mesler.currency.adaper.web.dto.exception.BasicErrorResponse;
 import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
+import com.edu.mesler.currency.adaper.web.exception.ClientException;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;
 import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
 import lombok.AccessLevel;
@@ -12,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class CurrencyControllerAdviceAdvice extends ResponseEntityExceptionHandler {
+public class CurrencyControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     protected BasicErrorResponse handleInternalException(InternalException ex) {
         return new BasicErrorResponse(ex.getCode(), ex.getMessage());
@@ -25,6 +26,11 @@ public class CurrencyControllerAdviceAdvice extends ResponseEntityExceptionHandl
 
     @ExceptionHandler
     protected BasicErrorResponse handleNotFoundException(NotFoundException ex) {
+        return new BasicErrorResponse(ex.getCode(), ex.getMessage());
+    }
+
+    @ExceptionHandler
+    protected BasicErrorResponse handleClientException(ClientException ex) {
         return new BasicErrorResponse(ex.getCode(), ex.getMessage());
     }
 }

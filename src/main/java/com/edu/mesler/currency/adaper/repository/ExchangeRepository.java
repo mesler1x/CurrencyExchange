@@ -1,6 +1,7 @@
 package com.edu.mesler.currency.adaper.repository;
 
 import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
+import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;
 import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
 import com.edu.mesler.currency.domain.ExchangeEntity;
@@ -37,7 +38,17 @@ public class ExchangeRepository {
     }
 
     public ExchangeEntity save(ExchangeRequest exchangeRequest) {
+
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
+
+        ExchangeEntity checkExchangeEntityExist = jdbcTemplate.query("SELECT * FROM ExchangeRates WHERE baseCurrencyId = ? and targetCurrencyId = ?",
+                new Object[]{exchangeRequest.baseCurrency(), exchangeRequest.targetCurrency()},
+                new ExchangeRowMapperImpl(currencyRepository)).stream().findAny().orElse(null);
+
+        if (checkExchangeEntityExist != null) {
+            throw new AlreadyExistException("Exchange");
+        }
+
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {

@@ -6,6 +6,8 @@ import com.edu.mesler.currency.service.ExchangeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class ExchangeController {
     }
 
     @PostMapping("/exchangeRates")
-    public ExchangeResponse createExchangeRate(@RequestBody ExchangeRateAddRequest exchangeRateAddRequest) {
-        return exchangeService.addNewExchangeRate(exchangeRateAddRequest);
+    public ResponseEntity<ExchangeResponse> createExchangeRate(@RequestBody ExchangeRateAddRequest exchangeRateAddRequest) {
+        return new ResponseEntity<>(exchangeService.addNewExchangeRate(exchangeRateAddRequest), HttpStatus.CREATED);
     }
 }
