@@ -1,4 +1,4 @@
-package com.edu.mesler.currency.adaper.web.dto;
+package com.edu.mesler.currency.adaper.web.dto.response;
 
 public record CurrencyResponse(int id, String name, String code, String sign) {
 }

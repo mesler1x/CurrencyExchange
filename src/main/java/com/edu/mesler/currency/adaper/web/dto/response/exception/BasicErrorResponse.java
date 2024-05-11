@@ -1,4 +1,4 @@
-package com.edu.mesler.currency.adaper.web.dto.exception;
+package com.edu.mesler.currency.adaper.web.dto.response.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

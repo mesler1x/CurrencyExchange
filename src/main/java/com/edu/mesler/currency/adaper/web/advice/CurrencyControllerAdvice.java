@@ -1,6 +1,6 @@
 package com.edu.mesler.currency.adaper.web.advice;
 
-import com.edu.mesler.currency.adaper.web.dto.exception.BasicErrorResponse;
+import com.edu.mesler.currency.adaper.web.dto.response.exception.BasicErrorResponse;
 import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
 import com.edu.mesler.currency.adaper.web.exception.ClientException;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;

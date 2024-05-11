@@ -1,11 +1,13 @@
 package com.edu.mesler.currency.adaper.web.controller;
 
-import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
-import com.edu.mesler.currency.adaper.web.dto.CurrencyResponse;
+import com.edu.mesler.currency.adaper.web.dto.request.CurrencyRequest;
+import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
 import com.edu.mesler.currency.service.CurrencyService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class CurrencyController {
     }
 
     @PostMapping("/currencies")
-    public CurrencyResponse create(@RequestBody CurrencyRequest currencyRequest) {
-        return currencyService.createCurrency(currencyRequest);
+    public ResponseEntity<CurrencyResponse> create(@RequestBody CurrencyRequest currencyRequest) {
+        return new ResponseEntity<>(currencyService.createCurrency(currencyRequest), HttpStatus.CREATED) ;
     }
 }

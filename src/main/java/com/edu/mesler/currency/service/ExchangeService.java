@@ -4,9 +4,9 @@ import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.repository.ExchangeRepository;
 import com.edu.mesler.currency.adaper.web.exception.ClientException;
 import com.edu.mesler.currency.service.mapper.ExchangeMapper;
-import com.edu.mesler.currency.adaper.web.dto.ExchangeRateAddRequest;
-import com.edu.mesler.currency.adaper.web.dto.ExchangeRequest;
-import com.edu.mesler.currency.adaper.web.dto.ExchangeResponse;
+import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRateAddRequest;
+import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRequest;
+import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import com.edu.mesler.currency.domain.ExchangeEntity;
 import lombok.AccessLevel;
@@ -46,7 +46,7 @@ public class ExchangeService {
 
         CurrencyEntity baseCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.baseCurrencyCode());
         CurrencyEntity targetCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.targetCurrencyCode());
-        
+
 
 
         ExchangeRequest exchangeRequest = new ExchangeRequest(baseCurrency.getId(), targetCurrency.getId(), exchangeRateAddRequest.rate());
@@ -68,6 +68,20 @@ public class ExchangeService {
 
         ExchangeEntity exchangeEntity = exchangeRepository.findExchangeByTwoCodesIds(baseCurrencyId, targetCurrencyId);
 
+        return exchangeMapper.entityToResponse(exchangeEntity);
+    }
+
+    public ExchangeResponse editExchangeRate(String codes, double rate) {
+        String baseCode = codes.substring(0, 3);
+        String targetCode = codes.substring(3);
+
+        CurrencyEntity baseCurrencyEntity = currencyRepository.getOneByCode(baseCode);
+        CurrencyEntity targetCurrencyEntity = currencyRepository.getOneByCode(targetCode);
+
+        int baseCurrencyId = baseCurrencyEntity.getId();
+        int targetCurrencyId = targetCurrencyEntity.getId();
+
+        ExchangeEntity exchangeEntity = exchangeRepository.updateExchangeRate(baseCurrencyId, targetCurrencyId, rate);
         return exchangeMapper.entityToResponse(exchangeEntity);
     }
 }

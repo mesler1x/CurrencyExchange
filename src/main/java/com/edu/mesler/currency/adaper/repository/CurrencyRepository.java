@@ -2,7 +2,7 @@ package com.edu.mesler.currency.adaper.repository;
 
 import com.edu.mesler.currency.service.mapper.CurrencyMapper;
 import com.edu.mesler.currency.service.mapper.CurrencyRowMapperImpl;
-import com.edu.mesler.currency.adaper.web.dto.CurrencyRequest;
+import com.edu.mesler.currency.adaper.web.dto.request.CurrencyRequest;
 import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;
 import com.edu.mesler.currency.adaper.web.exception.NotFoundException;

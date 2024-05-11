@@ -1,7 +1,8 @@
 package com.edu.mesler.currency.adaper.web.controller;
 
-import com.edu.mesler.currency.adaper.web.dto.ExchangeRateAddRequest;
-import com.edu.mesler.currency.adaper.web.dto.ExchangeResponse;
+import com.edu.mesler.currency.adaper.web.dto.request.ExchangeEditRequest;
+import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRateAddRequest;
+import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
 import com.edu.mesler.currency.service.ExchangeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,4 +33,11 @@ public class ExchangeController {
     public ResponseEntity<ExchangeResponse> createExchangeRate(@RequestBody ExchangeRateAddRequest exchangeRateAddRequest) {
         return new ResponseEntity<>(exchangeService.addNewExchangeRate(exchangeRateAddRequest), HttpStatus.CREATED);
     }
+
+    @PatchMapping("/exchangeRate/{codes}")
+    public ExchangeResponse editExistingExchangeRate(@PathVariable String codes, @RequestBody ExchangeEditRequest exchangeEditRequest) {
+        ExchangeResponse exchangeResponse = exchangeService.editExchangeRate(codes, exchangeEditRequest.rate());
+        return exchangeResponse;
+    }
 }
+
