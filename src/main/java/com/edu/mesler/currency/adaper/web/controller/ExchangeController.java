@@ -2,6 +2,7 @@ package com.edu.mesler.currency.adaper.web.controller;
 
 import com.edu.mesler.currency.adaper.web.dto.request.ExchangeEditRequest;
 import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRateAddRequest;
+import com.edu.mesler.currency.adaper.web.dto.response.ExchangeConvertedResponse;
 import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
 import com.edu.mesler.currency.service.ExchangeService;
 import lombok.AccessLevel;
@@ -36,8 +37,12 @@ public class ExchangeController {
 
     @PatchMapping("/exchangeRate/{codes}")
     public ExchangeResponse editExistingExchangeRate(@PathVariable String codes, @RequestBody ExchangeEditRequest exchangeEditRequest) {
-        ExchangeResponse exchangeResponse = exchangeService.editExchangeRate(codes, exchangeEditRequest.rate());
-        return exchangeResponse;
+        return exchangeService.editExchangeRate(codes, exchangeEditRequest.rate());
+    }
+
+    @GetMapping("/exchange")
+    public ExchangeConvertedResponse getExchangeRateAnyAmount(@RequestParam String fromCurrencyCode, @RequestParam String toCurrencyCode, @RequestParam String amount) {
+        return exchangeService.getExchangeAnyAmount(fromCurrencyCode, toCurrencyCode, amount);
     }
 }
 

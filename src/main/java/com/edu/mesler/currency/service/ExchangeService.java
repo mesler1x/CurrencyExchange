@@ -2,7 +2,11 @@ package com.edu.mesler.currency.service;
 
 import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.adaper.repository.ExchangeRepository;
+import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
+import com.edu.mesler.currency.adaper.web.dto.response.ExchangeConvertedResponse;
 import com.edu.mesler.currency.adaper.web.exception.ClientException;
+import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.service.mapper.CurrencyMapper;
 import com.edu.mesler.currency.service.mapper.ExchangeMapper;
 import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRateAddRequest;
 import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRequest;
@@ -24,6 +28,7 @@ public class ExchangeService {
     ExchangeRepository exchangeRepository;
     CurrencyRepository currencyRepository;
     ExchangeMapper exchangeMapper;
+    CurrencyMapper currencyMapper;
 
     public List<ExchangeResponse> getAllExchanges() {
         List<ExchangeEntity> queryResult = exchangeRepository.getAll();
@@ -83,5 +88,42 @@ public class ExchangeService {
 
         ExchangeEntity exchangeEntity = exchangeRepository.updateExchangeRate(baseCurrencyId, targetCurrencyId, rate);
         return exchangeMapper.entityToResponse(exchangeEntity);
+    }
+
+    public ExchangeConvertedResponse getExchangeAnyAmount(String fromCurrencyCode, String toCurrencyCode, String inAmount) {
+        CurrencyEntity baseCurrencyEntity = currencyRepository.getOneByCode(fromCurrencyCode);
+        CurrencyEntity targetCurrencyEntity = currencyRepository.getOneByCode(toCurrencyCode);
+
+        int baseCurrencyId = baseCurrencyEntity.getId();
+        int targetCurrencyId = targetCurrencyEntity.getId();
+
+        double amount = Double.parseDouble(inAmount);
+        double convertedAmount;
+
+        CurrencyResponse baseCurrencyResponse;
+        CurrencyResponse targetCurrencyResponse;
+        ExchangeEntity exchangeEntity;
+        try {
+            exchangeEntity = exchangeRepository.findExchangeByTwoCodesIds(baseCurrencyId, targetCurrencyId);
+
+            baseCurrencyResponse = currencyMapper.entityToResponse(baseCurrencyEntity);
+            targetCurrencyResponse = currencyMapper.entityToResponse(targetCurrencyEntity);
+            convertedAmount = amount * exchangeEntity.getRate();
+        } catch (NotFoundException ex) {
+            exchangeEntity = exchangeRepository.findExchangeByTwoCodesIds(targetCurrencyId, baseCurrencyId);
+
+
+            baseCurrencyResponse = currencyMapper.entityToResponse(targetCurrencyEntity);
+            targetCurrencyResponse = currencyMapper.entityToResponse(baseCurrencyEntity);
+            convertedAmount = amount / exchangeEntity.getRate();
+        }
+
+        return new ExchangeConvertedResponse(
+                baseCurrencyResponse,
+                targetCurrencyResponse,
+                exchangeEntity.getRate(),
+                amount,
+                convertedAmount
+        );
     }
 }
