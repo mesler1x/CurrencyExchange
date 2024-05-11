@@ -44,14 +44,13 @@ public class ExchangeService {
 
         if (exchangeRateAddRequest == null || exchangeRateAddRequest.rate() < 0 ||
                 exchangeRateAddRequest.baseCurrencyCode() == null || exchangeRateAddRequest.baseCurrencyCode().length() > 3
-        || exchangeRateAddRequest.targetCurrencyCode() == null || exchangeRateAddRequest.targetCurrencyCode().length() > 3 ||
-        exchangeRateAddRequest.targetCurrencyCode().equals(exchangeRateAddRequest.baseCurrencyCode())) {
+                || exchangeRateAddRequest.targetCurrencyCode() == null || exchangeRateAddRequest.targetCurrencyCode().length() > 3 ||
+                exchangeRateAddRequest.targetCurrencyCode().equals(exchangeRateAddRequest.baseCurrencyCode())) {
             throw new ClientException("Exchange add request");
         }
 
         CurrencyEntity baseCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.baseCurrencyCode());
         CurrencyEntity targetCurrency = currencyRepository.getOneByCode(exchangeRateAddRequest.targetCurrencyCode());
-
 
 
         ExchangeRequest exchangeRequest = new ExchangeRequest(baseCurrency.getId(), targetCurrency.getId(), exchangeRateAddRequest.rate());
@@ -62,7 +61,7 @@ public class ExchangeService {
     }
 
     public ExchangeResponse getExchangeByCodes(String codes) {
-        String baseCode = codes.substring(0,3);
+        String baseCode = codes.substring(0, 3);
         String targetCode = codes.substring(3);
 
         CurrencyEntity baseCurrencyEntity = currencyRepository.getOneByCode(baseCode);
@@ -113,17 +112,15 @@ public class ExchangeService {
             exchangeEntity = exchangeRepository.findExchangeByTwoCodesIds(targetCurrencyId, baseCurrencyId);
 
 
-            baseCurrencyResponse = currencyMapper.entityToResponse(targetCurrencyEntity);
-            targetCurrencyResponse = currencyMapper.entityToResponse(baseCurrencyEntity);
+            baseCurrencyResponse = currencyMapper.entityToResponse(baseCurrencyEntity);
+            targetCurrencyResponse = currencyMapper.entityToResponse(targetCurrencyEntity);
             convertedAmount = amount / exchangeEntity.getRate();
         }
 
-        return new ExchangeConvertedResponse(
-                baseCurrencyResponse,
-                targetCurrencyResponse,
-                exchangeEntity.getRate(),
-                amount,
-                convertedAmount
-        );
+        amount = Math.round(amount * 100.0) / 100.0;
+        convertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
+
+
+        return exchangeMapper.entityToConvertedResponse(exchangeEntity, baseCurrencyResponse, targetCurrencyResponse, amount, convertedAmount);
     }
 }

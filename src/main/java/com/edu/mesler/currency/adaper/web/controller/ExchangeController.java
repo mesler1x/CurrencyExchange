@@ -41,8 +41,8 @@ public class ExchangeController {
     }
 
     @GetMapping("/exchange")
-    public ExchangeConvertedResponse getExchangeRateAnyAmount(@RequestParam String fromCurrencyCode, @RequestParam String toCurrencyCode, @RequestParam String amount) {
-        return exchangeService.getExchangeAnyAmount(fromCurrencyCode, toCurrencyCode, amount);
+    public ExchangeConvertedResponse getExchangeRateAnyAmount(@RequestParam String from, @RequestParam String to, @RequestParam String amount) {
+        return exchangeService.getExchangeAnyAmount(from, to, amount);
     }
 }
 

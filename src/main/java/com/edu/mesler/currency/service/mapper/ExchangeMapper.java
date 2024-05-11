@@ -1,5 +1,7 @@
 package com.edu.mesler.currency.service.mapper;
 
+import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
+import com.edu.mesler.currency.adaper.web.dto.response.ExchangeConvertedResponse;
 import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
 import com.edu.mesler.currency.domain.ExchangeEntity;
 import lombok.AccessLevel;
@@ -21,6 +23,20 @@ public class ExchangeMapper {
                 currencyMapper.entityToResponse(entity.getBaseCurrency()),
                 currencyMapper.entityToResponse(entity.getTargetCurrency()),
                 entity.getRate()
+        );
+    }
+
+    public ExchangeConvertedResponse entityToConvertedResponse(ExchangeEntity entity,
+                                                               CurrencyResponse baseCurrencyResponse,
+                                                               CurrencyResponse targetCurrencyResponse,
+                                                               double amount,
+                                                               double convertedAmount) {
+        return new ExchangeConvertedResponse(
+                baseCurrencyResponse,
+                targetCurrencyResponse,
+                entity.getRate(),
+                amount,
+                convertedAmount
         );
     }
 }
