@@ -83,15 +83,13 @@ public class ExchangeRepository {
         try {
             exchangeEntity = jdbcTemplate
                     .query("SELECT * FROM ExchangeRates WHERE id = ?",
-                            new Object[]{id}, new ExchangeRowMapperImpl(currencyRepository)).stream().findFirst().orElse(null);
+                            new Object[]{id}, new ExchangeRowMapperImpl(currencyRepository))
+                    .stream().findFirst().orElseThrow(() -> new NotFoundException("Exchange with id - " + id));
 
         } catch (DataAccessException ex) {
             throw new InternalException("Database");
         }
 
-        if (exchangeEntity == null) {
-            throw new NotFoundException("Exchange with id - " + id);
-        }
         return exchangeEntity;
     }
 
@@ -100,14 +98,10 @@ public class ExchangeRepository {
         try {
             exchangeEntity = jdbcTemplate.query("SELECT * FROM ExchangeRates WHERE baseCurrencyId = ? and targetCurrencyId = ?",
                     new Object[]{baseCurrencyId, targetCurrencyId},
-                    new ExchangeRowMapperImpl(currencyRepository)).stream().findAny().orElse(null);
+                    new ExchangeRowMapperImpl(currencyRepository)).stream().findAny().orElseThrow(() -> new NotFoundException("Exchange rate with this codes"));
 
         } catch (DataAccessException ex) {
             throw new InternalException("Database");
-        }
-
-        if (exchangeEntity == null) {
-            throw new NotFoundException("Exchange rate with this codes");
         }
 
         return exchangeEntity;

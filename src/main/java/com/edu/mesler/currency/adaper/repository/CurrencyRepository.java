@@ -15,14 +15,15 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.management.relation.RoleInfoNotFoundException;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class CurrencyRepository {
     JdbcTemplate jdbcTemplate;
-    CurrencyMapper currencyMapper;
 
     public List<CurrencyEntity> getAll() {
         List<CurrencyEntity> queryResult;
@@ -42,13 +43,9 @@ public class CurrencyRepository {
         try {
             queryResult = jdbcTemplate.query("SELECT * FROM Currencies WHERE code = ?",
                     new Object[]{code},
-                    new CurrencyRowMapperImpl()).stream().findFirst().orElse(null);
+                    new CurrencyRowMapperImpl()).stream().findFirst().orElseThrow(() -> new NotFoundException("Currency"));
         } catch (DataAccessException e) {
             throw new InternalException("Database");
-        }
-
-        if(queryResult == null) {
-            throw new NotFoundException("Currency");
         }
 
         return queryResult;
@@ -62,21 +59,18 @@ public class CurrencyRepository {
             throw new AlreadyExistException("Currency with this code");
         }
 
-
         return getOneByCode(currencyRequest.code());
     }
 
     public CurrencyEntity getOneById(int id) {
         CurrencyEntity currencyEntity;
         try {
-            currencyEntity = jdbcTemplate.query("SELECT * FROM Currencies WHERE id = ?", new Object[]{id}, new CurrencyRowMapperImpl()).stream().findFirst().orElse(null);
+            currencyEntity = jdbcTemplate.query("SELECT * FROM Currencies WHERE id = ?", new Object[]{id},
+                    new CurrencyRowMapperImpl()).stream().findFirst().orElseThrow(() -> new NotFoundException("Currency with id " + id));
         } catch (DataAccessException e) {
             throw new InternalException("Database");
         }
 
-        if (currencyEntity == null) {
-            throw new NotFoundException("Currency with id " + id);
-        }
         return currencyEntity;
     }
 }
