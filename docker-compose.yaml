@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  currency-backend:
+    container_name: currency_backend
+    build:
+      dockerfile: Dockerfile
+    hostname: currency_backend
+    ports:
+      - "8080:8080"
+    networks:
+      - currency-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    hostname: currency_postgres
+    ports:
+      - "6432:5432"
+    networks:
+      - currency-network
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+networks:
+  currency-network:
+    driver: bridge
