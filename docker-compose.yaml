@@ -24,7 +24,7 @@ services:
     networks:
       - currency-network
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db:/docker-entrypoint-initdb.d
 
 networks:
   currency-network:

@@ -1,0 +1,4 @@
+CREATE DATABASE currency;
+GRANT ALL PRIVILEGES ON DATABASE currency TO postgres;
+
+
