@@ -1,6 +1,5 @@
 package com.edu.mesler.currency.adapter.web.controller;
 
-import com.edu.mesler.currency.adapter.web.dto.request.ExchangeEditRequest;
 import com.edu.mesler.currency.adapter.web.dto.request.ExchangeRateAddRequest;
 import com.edu.mesler.currency.adapter.web.dto.response.ExchangeConvertedResponse;
 import com.edu.mesler.currency.adapter.web.dto.response.ExchangeResponse;
@@ -11,11 +10,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -45,8 +46,9 @@ public class ExchangeController {
             summary = "Создание нового обменного курса.",
             description = "Добавление нового обменного курса в базу."
     )
-    @PostMapping("/exchangeRates")
-    public ResponseEntity<ExchangeResponse> createExchangeRate(@RequestBody ExchangeRateAddRequest exchangeRateAddRequest) {
+    @PostMapping(value = "/exchangeRates", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public ResponseEntity<ExchangeResponse> createExchangeRate(@RequestParam String baseCurrencyCode, @RequestParam String targetCurrencyCode, @RequestParam double rate) {
+        ExchangeRateAddRequest exchangeRateAddRequest = new ExchangeRateAddRequest(baseCurrencyCode, targetCurrencyCode, rate);
         return new ResponseEntity<>(exchangeService.addNewExchangeRate(exchangeRateAddRequest), HttpStatus.CREATED);
     }
 
@@ -54,9 +56,9 @@ public class ExchangeController {
             summary = "Обновление существующего обменного курса",
             description = "Обновление существующего в базе обменного курса. Валютная пара задаётся идущими подряд кодами валют в адресе запроса."
     )
-    @PatchMapping("/exchangeRate/{codes}")
-    public ExchangeResponse editExistingExchangeRate(@PathVariable String codes, @RequestBody ExchangeEditRequest exchangeEditRequest) {
-        return exchangeService.editExchangeRate(codes, exchangeEditRequest.rate());
+    @PatchMapping(value = "/exchangeRate/{codes}", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public ExchangeResponse editExistingExchangeRate(@PathVariable String codes, @RequestParam double rate) {
+        return exchangeService.editExchangeRate(codes, rate);
     }
 
     @Operation(

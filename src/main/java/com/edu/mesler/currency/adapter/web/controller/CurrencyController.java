@@ -9,11 +9,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -43,8 +45,9 @@ public class CurrencyController {
             summary = "Создание валюты.",
             description = "Ендпоинт для создания новой валюты."
     )
-    @PostMapping("/currencies")
-    public ResponseEntity<CurrencyResponse> create(@RequestBody CurrencyRequest currencyRequest) {
-        return new ResponseEntity<>(currencyService.createCurrency(currencyRequest), HttpStatus.CREATED) ;
+    @PostMapping(value = "/currencies", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public ResponseEntity<CurrencyResponse> create(@RequestParam String name, @RequestParam String code, @RequestParam String sign) {
+        CurrencyRequest currencyRequest = new CurrencyRequest(name, code, sign);
+        return new ResponseEntity<>(currencyService.createCurrency(currencyRequest), HttpStatus.CREATED);
     }
 }
