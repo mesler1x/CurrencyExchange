@@ -1,6 +1,5 @@
 package com.edu.mesler.currency.adaper.repository;
 
-import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRequest;
 import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
 import com.edu.mesler.currency.adaper.web.exception.InternalException;
 import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
@@ -12,15 +11,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -31,46 +28,42 @@ public class ExchangeRepository {
     public List<ExchangeEntity> getAll() {
         List<ExchangeEntity> queryResult;
         try {
-            queryResult = jdbcTemplate.query("SELECT * FROM ExchangeRates", new ExchangeRowMapperImpl(currencyRepository));
+            queryResult = jdbcTemplate.query(
+                    "SELECT er.id as id, er.rate as rate, " +
+                            "bc.id as bcurrency_id, bc.code as bcurrency_code, bc.fullname as bcurrency_fullname, bc.sign as bcurrency_sign, " +
+                            "tc.id as tcurrency_id, tc.code as tcurrency_code, tc.fullname as tcurrency_fullname, tc.sign as tcurrency_sign " +
+                            "FROM ExchangeRates er JOIN Currencies bc ON er.basecurrencyid = bc.id JOIN Currencies tc ON er.targetcurrencyid = tc.id",
+
+                    new ExchangeRowMapperImpl());
         } catch (DataAccessException exception) {
             throw new InternalException("Database");
         }
         return queryResult;
     }
 
-    public ExchangeEntity save(ExchangeRequest exchangeRequest) {
+    public ExchangeEntity save(String baseCurrencyCode, String targetCurrencyCode, double rate) {
+
+        Optional<ExchangeEntity> exchangeByTwoCodes = findExchangeByTwoCodes(baseCurrencyCode, targetCurrencyCode);
+        if (exchangeByTwoCodes.isPresent()) {
+            throw new AlreadyExistException("Exchange rate");
+        }
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        ExchangeEntity checkExchangeEntityExist;
+        CurrencyEntity baseEntity = currencyRepository.getOneByCode(baseCurrencyCode);
+        CurrencyEntity targetEntity = currencyRepository.getOneByCode(targetCurrencyCode);
+
         try {
-            checkExchangeEntityExist = jdbcTemplate.query("SELECT * FROM ExchangeRates WHERE baseCurrencyId = ? and targetCurrencyId = ?",
-                    new Object[]{exchangeRequest.baseCurrency(), exchangeRequest.targetCurrency()},
-                    new ExchangeRowMapperImpl(currencyRepository)).stream().findAny().orElse(null);
-
-        } catch (DataAccessException ex) {
-            throw new InternalException("Database");
-        }
-
-        if (checkExchangeEntityExist != null) {
-            throw new AlreadyExistException("Exchange");
-        }
-
-        try{
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement statement = con.prepareStatement("INSERT INTO ExchangeRates (basecurrencyid, targetcurrencyid, rate) VALUES (?,?,?)",
-                            PreparedStatement.RETURN_GENERATED_KEYS);
-                    statement.setInt(1,exchangeRequest.baseCurrency());
-                    statement.setInt(2, exchangeRequest.targetCurrency());
-                    statement.setDouble(3, exchangeRequest.rate());
-                    return statement;
-                }
+            jdbcTemplate.update(con -> {
+                PreparedStatement statement = con.prepareStatement("INSERT INTO ExchangeRates (basecurrencyid, targetcurrencyid, rate) VALUES (?,?,?)",
+                        PreparedStatement.RETURN_GENERATED_KEYS);
+                statement.setInt(1, baseEntity.getId());
+                statement.setInt(2, targetEntity.getId());
+                statement.setDouble(3, rate);
+                return statement;
             }, holder);
         } catch (DataAccessException ex) {
             throw new InternalException("Database");
         }
-
 
 
         Map<String, Object> map = holder.getKeys();
@@ -82,10 +75,13 @@ public class ExchangeRepository {
         ExchangeEntity exchangeEntity;
         try {
             exchangeEntity = jdbcTemplate
-                    .query("SELECT * FROM ExchangeRates WHERE id = ?",
-                            new Object[]{id}, new ExchangeRowMapperImpl(currencyRepository))
+                    .query("SELECT er.id as id, er.rate as rate, " +
+                                    "bc.id as bcurrency_id, bc.code as bcurrency_code, bc.fullname as bcurrency_fullname, bc.sign as bcurrency_sign, " +
+                                    "tc.id as tcurrency_id, tc.code as tcurrency_code, tc.fullname as tcurrency_fullname, tc.sign as tcurrency_sign " +
+                                    "FROM ExchangeRates er JOIN Currencies bc ON er.basecurrencyid = bc.id JOIN Currencies tc ON er.targetcurrencyid = tc.id " +
+                                    "WHERE er.id = ?",
+                            new Object[]{id}, new ExchangeRowMapperImpl())
                     .stream().findFirst().orElseThrow(() -> new NotFoundException("Exchange with id - " + id));
-
         } catch (DataAccessException ex) {
             throw new InternalException("Database");
         }
@@ -93,12 +89,16 @@ public class ExchangeRepository {
         return exchangeEntity;
     }
 
-    public ExchangeEntity findExchangeByTwoCodesIds(int baseCurrencyId, int targetCurrencyId) {
-        ExchangeEntity exchangeEntity;
+    public Optional<ExchangeEntity> findExchangeByTwoCodes(String baseCurrencyCode, String targetCurrencyCode) {
+        Optional<ExchangeEntity> exchangeEntity;
         try {
-            exchangeEntity = jdbcTemplate.query("SELECT * FROM ExchangeRates WHERE baseCurrencyId = ? and targetCurrencyId = ?",
-                    new Object[]{baseCurrencyId, targetCurrencyId},
-                    new ExchangeRowMapperImpl(currencyRepository)).stream().findAny().orElseThrow(() -> new NotFoundException("Exchange rate with this codes"));
+            exchangeEntity = jdbcTemplate.query("SELECT er.id as id, er.rate as rate, " +
+                            "bc.id as bcurrency_id, bc.code as bcurrency_code, bc.fullname as bcurrency_fullname, bc.sign as bcurrency_sign, " +
+                            "tc.id as tcurrency_id, tc.code as tcurrency_code, tc.fullname as tcurrency_fullname, tc.sign as tcurrency_sign " +
+                            "FROM ExchangeRates er JOIN Currencies bc ON er.basecurrencyid = bc.id JOIN Currencies tc ON er.targetcurrencyid = tc.id " +
+                            "WHERE bc.code = ? AND tc.code = ?",
+                    new Object[]{baseCurrencyCode, targetCurrencyCode},
+                    new ExchangeRowMapperImpl()).stream().findAny();
 
         } catch (DataAccessException ex) {
             throw new InternalException("Database");
@@ -107,8 +107,8 @@ public class ExchangeRepository {
         return exchangeEntity;
     }
 
-    public ExchangeEntity updateExchangeRate(int baseCurrencyId, int targetCurrencyId, double rate) {
-        ExchangeEntity exchangeEntity = findExchangeByTwoCodesIds(baseCurrencyId,targetCurrencyId);
+    public ExchangeEntity updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) {
+        ExchangeEntity exchangeEntity = findExchangeByTwoCodes(baseCurrencyCode, targetCurrencyCode).get();
         try {
             jdbcTemplate.update("UPDATE exchangerates SET rate = ? WHERE id = ?", rate, exchangeEntity.getId());
         } catch (DataAccessException ex) {
@@ -116,8 +116,6 @@ public class ExchangeRepository {
         }
 
         exchangeEntity = getById(exchangeEntity.getId());
-
-
         return exchangeEntity;
     }
 }

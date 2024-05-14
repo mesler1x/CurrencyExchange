@@ -26,7 +26,7 @@ public class ExchangeMapper {
         );
     }
 
-    public ExchangeConvertedResponse entityToConvertedResponse(ExchangeEntity entity,
+    public ExchangeConvertedResponse entityToConvertedResponse(double rate,
                                                                CurrencyResponse baseCurrencyResponse,
                                                                CurrencyResponse targetCurrencyResponse,
                                                                double amount,
@@ -34,7 +34,7 @@ public class ExchangeMapper {
         return new ExchangeConvertedResponse(
                 baseCurrencyResponse,
                 targetCurrencyResponse,
-                entity.getRate(),
+                rate,
                 amount,
                 convertedAmount
         );

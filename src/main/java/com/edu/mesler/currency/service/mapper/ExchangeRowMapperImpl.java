@@ -1,6 +1,5 @@
 package com.edu.mesler.currency.service.mapper;
 
-import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import com.edu.mesler.currency.domain.ExchangeEntity;
 import lombok.RequiredArgsConstructor;
@@ -11,18 +10,29 @@ import java.sql.SQLException;
 
 @RequiredArgsConstructor
 public class ExchangeRowMapperImpl implements RowMapper<ExchangeEntity> {
-    private final CurrencyRepository currencyRepository;
     @Override
     public ExchangeEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ExchangeEntity exchangeEntity = new ExchangeEntity();
         int id = rs.getInt("id");
 
-        int baseId = rs.getInt("basecurrencyid");
-        int targetId = rs.getInt("targetcurrencyid");
+        CurrencyEntity baseCurrencyEntity = new CurrencyEntity();
+        CurrencyEntity targetCurrencyEntity = new CurrencyEntity();
 
-        CurrencyEntity baseCurrencyEntity = currencyRepository.getOneById(baseId);
-        CurrencyEntity targetCurrencyEntity = currencyRepository.getOneById(targetId);
+        baseCurrencyEntity.setId(rs.getInt("bcurrency_id"));
+        baseCurrencyEntity.setCode(rs.getString("bcurrency_code"));
+        baseCurrencyEntity.setFullName(rs.getString("bcurrency_fullname"));
+        baseCurrencyEntity.setSign(rs.getString("bcurrency_sign"));
 
-        double rate = rs.getDouble("rate");
-        return new ExchangeEntity(id, baseCurrencyEntity, targetCurrencyEntity, rate);
+        targetCurrencyEntity.setId(rs.getInt("tcurrency_id"));
+        targetCurrencyEntity.setCode(rs.getString("tcurrency_code"));
+        targetCurrencyEntity.setFullName(rs.getString("tcurrency_fullname"));
+        targetCurrencyEntity.setSign(rs.getString("tcurrency_sign"));
+
+        exchangeEntity.setId(id);
+        exchangeEntity.setRate(rs.getDouble("rate"));
+        exchangeEntity.setBaseCurrency(baseCurrencyEntity);
+        exchangeEntity.setTargetCurrency(targetCurrencyEntity);
+
+        return exchangeEntity;
     }
 }
