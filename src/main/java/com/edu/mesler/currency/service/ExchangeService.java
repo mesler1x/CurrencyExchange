@@ -131,7 +131,7 @@ public class ExchangeService {
         throw new NotFoundException("Exchange");
     }
 
-    private static double roundNumberToResponse(double amount) {
+    private double roundNumberToResponse(double amount) {
         amount = Math.round(amount * 100.0) / 100.0;
         return amount;
     }
