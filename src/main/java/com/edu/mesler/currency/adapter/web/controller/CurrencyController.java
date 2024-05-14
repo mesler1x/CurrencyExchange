@@ -1,7 +1,7 @@
-package com.edu.mesler.currency.adaper.web.controller;
+package com.edu.mesler.currency.adapter.web.controller;
 
-import com.edu.mesler.currency.adaper.web.dto.request.CurrencyRequest;
-import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
+import com.edu.mesler.currency.adapter.web.dto.request.CurrencyRequest;
+import com.edu.mesler.currency.adapter.web.dto.response.CurrencyResponse;
 import com.edu.mesler.currency.service.CurrencyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

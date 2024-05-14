@@ -1,10 +1,10 @@
-package com.edu.mesler.currency.adaper.web.advice;
+package com.edu.mesler.currency.adapter.web.advice;
 
-import com.edu.mesler.currency.adaper.web.dto.response.exception.BasicErrorResponse;
-import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
-import com.edu.mesler.currency.adaper.web.exception.ClientException;
-import com.edu.mesler.currency.adaper.web.exception.InternalException;
-import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.adapter.web.dto.response.exception.BasicErrorResponse;
+import com.edu.mesler.currency.adapter.web.exception.AlreadyExistException;
+import com.edu.mesler.currency.adapter.web.exception.ClientException;
+import com.edu.mesler.currency.adapter.web.exception.InternalException;
+import com.edu.mesler.currency.adapter.web.exception.NotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatusCode;

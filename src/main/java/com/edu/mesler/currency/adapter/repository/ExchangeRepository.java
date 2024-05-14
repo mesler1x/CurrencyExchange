@@ -1,8 +1,8 @@
-package com.edu.mesler.currency.adaper.repository;
+package com.edu.mesler.currency.adapter.repository;
 
-import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
-import com.edu.mesler.currency.adaper.web.exception.InternalException;
-import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.adapter.web.exception.AlreadyExistException;
+import com.edu.mesler.currency.adapter.web.exception.InternalException;
+import com.edu.mesler.currency.adapter.web.exception.NotFoundException;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import com.edu.mesler.currency.domain.ExchangeEntity;
 import com.edu.mesler.currency.service.mapper.ExchangeRowMapperImpl;
@@ -36,7 +36,7 @@ public class ExchangeRepository {
 
                     new ExchangeRowMapperImpl());
         } catch (DataAccessException exception) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while fetching all exchange rates.");
         }
         return queryResult;
     }
@@ -62,7 +62,7 @@ public class ExchangeRepository {
                 return statement;
             }, holder);
         } catch (DataAccessException ex) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while saving the exchange rate.");
         }
 
 
@@ -83,7 +83,7 @@ public class ExchangeRepository {
                             new Object[]{id}, new ExchangeRowMapperImpl())
                     .stream().findFirst().orElseThrow(() -> new NotFoundException("Exchange with id - " + id));
         } catch (DataAccessException ex) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while getting exchange by id");
         }
 
         return exchangeEntity;
@@ -101,7 +101,7 @@ public class ExchangeRepository {
                     new ExchangeRowMapperImpl()).stream().findAny();
 
         } catch (DataAccessException ex) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while finding exchange rate by currency codes.");
         }
 
         return exchangeEntity;
@@ -112,7 +112,7 @@ public class ExchangeRepository {
         try {
             jdbcTemplate.update("UPDATE exchangerates SET rate = ? WHERE id = ?", rate, exchangeEntity.getId());
         } catch (DataAccessException ex) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while updating the exchange rate.");
         }
 
         exchangeEntity = getById(exchangeEntity.getId());

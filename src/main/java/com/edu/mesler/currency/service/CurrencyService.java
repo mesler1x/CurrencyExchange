@@ -1,9 +1,9 @@
 package com.edu.mesler.currency.service;
 
-import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
+import com.edu.mesler.currency.adapter.repository.CurrencyRepository;
 import com.edu.mesler.currency.service.mapper.CurrencyMapper;
-import com.edu.mesler.currency.adaper.web.dto.request.CurrencyRequest;
-import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
+import com.edu.mesler.currency.adapter.web.dto.request.CurrencyRequest;
+import com.edu.mesler.currency.adapter.web.dto.response.CurrencyResponse;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

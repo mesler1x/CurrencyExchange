@@ -1,12 +1,11 @@
 package com.edu.mesler.currency.service;
 
-import com.edu.mesler.currency.adaper.repository.CurrencyRepository;
-import com.edu.mesler.currency.adaper.repository.ExchangeRepository;
-import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRateAddRequest;
-import com.edu.mesler.currency.adaper.web.dto.response.ExchangeConvertedResponse;
-import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
-import com.edu.mesler.currency.adaper.web.exception.ClientException;
-import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.adapter.repository.ExchangeRepository;
+import com.edu.mesler.currency.adapter.web.dto.request.ExchangeRateAddRequest;
+import com.edu.mesler.currency.adapter.web.dto.response.ExchangeConvertedResponse;
+import com.edu.mesler.currency.adapter.web.dto.response.ExchangeResponse;
+import com.edu.mesler.currency.adapter.web.exception.ClientException;
+import com.edu.mesler.currency.adapter.web.exception.NotFoundException;
 import com.edu.mesler.currency.domain.ExchangeEntity;
 import com.edu.mesler.currency.service.mapper.CurrencyMapper;
 import com.edu.mesler.currency.service.mapper.ExchangeMapper;

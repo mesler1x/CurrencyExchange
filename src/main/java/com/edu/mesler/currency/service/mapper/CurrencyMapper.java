@@ -1,6 +1,6 @@
 package com.edu.mesler.currency.service.mapper;
 
-import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
+import com.edu.mesler.currency.adapter.web.dto.response.CurrencyResponse;
 import com.edu.mesler.currency.domain.CurrencyEntity;
 import org.springframework.stereotype.Component;
 

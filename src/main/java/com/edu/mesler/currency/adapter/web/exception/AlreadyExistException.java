@@ -1,4 +1,4 @@
-package com.edu.mesler.currency.adaper.web.exception;
+package com.edu.mesler.currency.adapter.web.exception;
 
 import lombok.Getter;
 

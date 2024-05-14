@@ -1,8 +1,8 @@
 package com.edu.mesler.currency.service.mapper;
 
-import com.edu.mesler.currency.adaper.web.dto.response.CurrencyResponse;
-import com.edu.mesler.currency.adaper.web.dto.response.ExchangeConvertedResponse;
-import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
+import com.edu.mesler.currency.adapter.web.dto.response.CurrencyResponse;
+import com.edu.mesler.currency.adapter.web.dto.response.ExchangeConvertedResponse;
+import com.edu.mesler.currency.adapter.web.dto.response.ExchangeResponse;
 import com.edu.mesler.currency.domain.ExchangeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;

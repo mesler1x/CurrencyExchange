@@ -1,12 +1,11 @@
-package com.edu.mesler.currency.adaper.repository;
+package com.edu.mesler.currency.adapter.repository;
 
-import com.edu.mesler.currency.service.mapper.CurrencyMapper;
-import com.edu.mesler.currency.service.mapper.CurrencyRowMapperImpl;
-import com.edu.mesler.currency.adaper.web.dto.request.CurrencyRequest;
-import com.edu.mesler.currency.adaper.web.exception.AlreadyExistException;
-import com.edu.mesler.currency.adaper.web.exception.InternalException;
-import com.edu.mesler.currency.adaper.web.exception.NotFoundException;
+import com.edu.mesler.currency.adapter.web.dto.request.CurrencyRequest;
+import com.edu.mesler.currency.adapter.web.exception.AlreadyExistException;
+import com.edu.mesler.currency.adapter.web.exception.InternalException;
+import com.edu.mesler.currency.adapter.web.exception.NotFoundException;
 import com.edu.mesler.currency.domain.CurrencyEntity;
+import com.edu.mesler.currency.service.mapper.CurrencyRowMapperImpl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -15,9 +14,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.management.relation.RoleInfoNotFoundException;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Component
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -31,7 +28,7 @@ public class CurrencyRepository {
         try {
             queryResult = jdbcTemplate.query("SELECT * FROM Currencies", new CurrencyRowMapperImpl());
         } catch (DataAccessException exception) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while fetching all currencies.");
         }
 
         return queryResult;
@@ -39,13 +36,13 @@ public class CurrencyRepository {
 
 
     public CurrencyEntity getOneByCode(String code) {
-        CurrencyEntity queryResult = null;
+        CurrencyEntity queryResult;
         try {
             queryResult = jdbcTemplate.query("SELECT * FROM Currencies WHERE code = ?",
                     new Object[]{code},
                     new CurrencyRowMapperImpl()).stream().findFirst().orElseThrow(() -> new NotFoundException("Currency"));
         } catch (DataAccessException e) {
-            throw new InternalException("Database");
+            throw new InternalException("Database error occurred while getting one currency by code");
         }
 
         return queryResult;
@@ -60,17 +57,5 @@ public class CurrencyRepository {
         }
 
         return getOneByCode(currencyRequest.code());
-    }
-
-    public CurrencyEntity getOneById(int id) {
-        CurrencyEntity currencyEntity;
-        try {
-            currencyEntity = jdbcTemplate.query("SELECT * FROM Currencies WHERE id = ?", new Object[]{id},
-                    new CurrencyRowMapperImpl()).stream().findFirst().orElseThrow(() -> new NotFoundException("Currency with id " + id));
-        } catch (DataAccessException e) {
-            throw new InternalException("Database");
-        }
-
-        return currencyEntity;
     }
 }

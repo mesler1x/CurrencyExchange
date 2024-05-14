@@ -1,9 +1,9 @@
-package com.edu.mesler.currency.adaper.web.controller;
+package com.edu.mesler.currency.adapter.web.controller;
 
-import com.edu.mesler.currency.adaper.web.dto.request.ExchangeEditRequest;
-import com.edu.mesler.currency.adaper.web.dto.request.ExchangeRateAddRequest;
-import com.edu.mesler.currency.adaper.web.dto.response.ExchangeConvertedResponse;
-import com.edu.mesler.currency.adaper.web.dto.response.ExchangeResponse;
+import com.edu.mesler.currency.adapter.web.dto.request.ExchangeEditRequest;
+import com.edu.mesler.currency.adapter.web.dto.request.ExchangeRateAddRequest;
+import com.edu.mesler.currency.adapter.web.dto.response.ExchangeConvertedResponse;
+import com.edu.mesler.currency.adapter.web.dto.response.ExchangeResponse;
 import com.edu.mesler.currency.service.ExchangeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
