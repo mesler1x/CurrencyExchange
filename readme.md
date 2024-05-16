@@ -13,3 +13,10 @@ REST API для описания валют и обменных курсов. П
 ## Запуск проекта
 
 Протестировать работу ендпоинтов вы можете по адресу http://87.242.101.244:8080
+
+## Запуск проекта локально
+
+1) ```git clone https://github.com/mesler1x/CurrencyExchange.git``` 
+2) ```cd CurrencyExchange```
+3) ```docker compose up -d```
+4) Ендпоинты API и их описание доступны по адресу localhost:8080/swagger-ui/index.html

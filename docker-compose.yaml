@@ -2,8 +2,7 @@ version: "3.9"
 services:
   currency-backend:
     container_name: currency_backend
-    build:
-      dockerfile: Dockerfile
+    image: mesler1x/currencyexchange:01
     hostname: currency_backend
     ports:
       - "8080:8080"
